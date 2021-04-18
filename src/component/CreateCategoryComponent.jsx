@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CategoryService from '../services/CategoryService';
 import Alert from 'react-bootstrap/Alert';
+import ErrorHandler from '../ErrorHandler';
 
 export default class CreateCategoryComponent extends Component {
 
@@ -30,21 +31,7 @@ export default class CreateCategoryComponent extends Component {
         CategoryService.createCategory(category).then((res) => {
             this.props.history.push('/categories');
         }).catch(err => {
-            console.log(err.response.data.response);
-            if (err.response.data.response !==undefined) {
-                console.log(err.response.data.response);
-                this.setState({ show: true, alterValue: err.response.data.response })
-            }
-            else if (err.response.data.errors !== undefined) {
-                let message = '';
-                err.response.data.errors.forEach(function (item, i, arr) {
-                    message += item.defaultMessage;
-                });
-                this.setState({ show: true, alterValue: message });
-            }
-            else {
-                this.setState({ show: true, alterValue: err.response.data.error + ": please try again" });
-            }
+            this.setState({show:true, alterValue: ErrorHandler.updateErrorHandler(err)});
         });
     }
 
@@ -65,11 +52,8 @@ export default class CreateCategoryComponent extends Component {
 
     render() {
         return (
-
-
-
             <div>
-                <h3 className="text-center">Create new category</h3>
+                <h3 className="text-left border-bottom">Create new category</h3>
                 <form>
                     <div className="form-group">
                         <label>Category Name</label>
@@ -81,13 +65,13 @@ export default class CreateCategoryComponent extends Component {
                         <input placeholder="Req Name" name="reqName" className="form-control"
                             value={this.state.reqName} onChange={this.changeReqNameHandler} />
                     </div>
-
-                    <button className="btn btn-succes" onClick={this.saveCategory}>Save</button>
-                    <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{ marginLeft: "10px" }}>Cancel</button>
-                </form>
-                <Alert variant="danger" show={this.state.show} >
-                    {this.state.alterValue}
-                </Alert>
+                    <Alert variant="danger" show={this.state.show}>
+                        {this.state.alterValue}
+                    </Alert>
+                    <button className="btn btn-primary" onClick={this.saveCategory}>Save</button>
+                    <button className="btn btn-danger float-right" 
+                            onClick={this.cancel.bind(this)}>Cancel</button>
+                </form>               
             </div>
         );
     }

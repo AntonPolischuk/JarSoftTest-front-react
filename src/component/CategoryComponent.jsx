@@ -39,30 +39,30 @@ export default class CategoryComponent extends Component {
       });
 
       return (
-      <Row>
-        <Col>
-          <h2>Categories</h2>
-          <div className="form">
+        <div className="row">
+        <div className="col-4">
+          <h2>Categories:</h2>
+          <div className="input-group mb-3">
             <input type="text" placeholder="Search" onChange={(event) => this.setState({ searchValue: event.target.value })} />
           </div>
           {filter.map(categories =>
             <p key={categories.id} >
-              <Link to={`${this.props.match.url}/${categories.id}`}>{categories.categoryName}</Link>
+              <Link to={`${this.props.match.url}/${categories.id}`} className="btn-link btn active">
+                {categories.categoryName}
+                </Link>
             </p>
+          )}
+          <Link to="/categories/create" className="btn btn-primary active">Create category</Link>
+        </div>
 
-          )
-          }
-          <Link to="/categories/create">Create category</Link>
-        </Col>
-
-        <Col>
+        <div className="col-8">
           <Switch>
             <Route exact path={`${this.props.match.url}/create`} component={CreateCategoryComponent} />
             <Route path={`${this.props.match.url}/:id`} component={UpdateCategoryComponent} />
             <Route exact path={this.props.match.url} render={() => <div> Please select a Category</div>} />
           </Switch>
-        </Col>
-      </Row>
+        </div>
+      </div>
 
     )
   }

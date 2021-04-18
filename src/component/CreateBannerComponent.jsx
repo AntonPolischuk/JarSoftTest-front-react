@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import BannerService from '../services/BannerService';
 import CategoryService from '../services/CategoryService';
 import Alert from 'react-bootstrap/Alert';
+import ErrorHandler from '../ErrorHandler';
 
 export default class CreateBannerComponent extends Component {
 
@@ -39,19 +40,7 @@ export default class CreateBannerComponent extends Component {
                 this.props.history.push('/banners')
             })
             .catch(err => {
-                if (err.response.data.response !== undefined) {
-                    this.setState({ show: true, alterValue: err.response.data.response });
-                }
-                else if (err.response.data.errors !== undefined) {
-                    let message = '';
-                    err.response.data.errors.forEach(function (item, i, arr) {
-                        message += item.defaultMessage;
-                    });
-                    this.setState({ show: true, alterValue: message });
-                }
-                else {
-                    this.setState({ show: true, alterValue: err.response.data.error + ": please try again" });
-                }
+                this.setState({show:true, alterValue: ErrorHandler.updateErrorHandler(err)});
             });
     }
 
@@ -93,51 +82,43 @@ export default class CreateBannerComponent extends Component {
         return (
             <div>
                 <div>
-                    <div>
-                        <div>
-                            <h3 className="text-center">Add Banner</h3>
-                            <form>
-                                <div className="form-group">
-                                    <label>Banner Name</label>
-                                    <input placeholder="Banner Name" name="bannername" className="form-control"
-                                        value={this.state.name} onChange={this.changeBannerNameHandler} />
-                                </div>
-                                <div className="form-group">
-                                    <label>Price</label>
-                                    <input placeholder="Price" name="price" className="form-control"
-                                        value={this.state.price} onChange={this.changePriceHandler} />
-                                </div>
-
-                                <div className="form-group">
-
-                                    <label>Category</label>
-                                    <select onChange={this.changeCategoryHandler}>
-                                        {
-                                            this.state.categories.map(
-                                                categories => <option key={categories.id} value={categories.id}>{categories.categoryName}</option>
-                                            )
-                                        }
-                                    </select>
-
-                                </div>
-
-
-                                <div className="form-group">
-                                    <label>Content</label>
-                                    <textarea placeholder="Content" name="content" className="form-control"
-                                        value={this.state.content} onChange={this.changeContentHandler} />
-                                </div>
-
-                                <button className="btn btn-succes" onClick={this.saveBanner}>Save</button>
-                                <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{ marginLeft: "10px" }}>Cancel</button>
-                            </form>
+                    <h3 className="text-left border-bottom">Create new banner</h3>
+                    <form>
+                        <div className="form-group">
+                            <label>Banner Name</label>
+                            <input placeholder="Banner Name" name="bannername" className="form-control"
+                                    value={this.state.name} onChange={this.changeBannerNameHandler} />
                         </div>
-                    </div>
+                        <div className="form-group">
+                            <label>Price</label>
+                            <input placeholder="Price" name="price" className="form-control"
+                                    value={this.state.price} onChange={this.changePriceHandler} />
+                         </div>
+                        <div className="form-group">
+                            <label>Content</label>
+                            <textarea placeholder="Content" name="content" className="form-control"
+                                    value={this.state.content} onChange={this.changeContentHandler} />
+                        </div>
+                        <div className="form-group">
+                            <label>Category</label>
+                            <select onChange={this.changeCategoryHandler}>
+                                {
+                                    this.state.categories.map(categories =>
+                                            <option key={categories.id} value={categories.id}>
+                                                {categories.categoryName}</option>
+                                            )
+                                }
+                            </select>
+                        </div>
+                        <Alert variant="danger" show={this.state.show}>{this.state.alterValue}</Alert>
+                        <button className="btn btn-primary" onClick={this.saveBanner}>Save</button>
+                        <button className="btn btn-danger float-right" 
+                        onClick={this.cancel.bind(this)}>Cancel</button>
+                    </form>
                 </div>
-                <Alert variant="danger" show={this.state.show} >
-                    {this.state.alterValue}
-                </Alert>
             </div>
+                
+            
         );
     }
 }

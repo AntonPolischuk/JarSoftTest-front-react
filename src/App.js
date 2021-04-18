@@ -1,10 +1,8 @@
-
 import {Route}from 'react-router-dom';
 import React, { Component } from 'react'
 import CategoryComponent from './component/CategoryComponent';
-import HeaderComponent from './component/HeaderComponent';
-import { Container, Row } from 'react-bootstrap';
 import BannerComponent from './component/BannerComponent';
+import TopMenuComponent from './component/TopMenuComponent';
 
 
 export default class App extends Component {
@@ -18,15 +16,12 @@ export default class App extends Component {
   }
   render() {
     return (
-    <Container fluid="xl">
-      <Row>
-       <HeaderComponent/>
-      </Row>
-      <Row>
-      <Route path="/categories" component={CategoryComponent}/>
-      <Route path="/banners" component={BannerComponent}/>
-      </Row>
-   </Container>
+      <div className="container">
+      
+        <TopMenuComponent/>
+        <Route path="/categories" component={CategoryComponent}/>
+        <Route path="/banners" component={BannerComponent}/>
+      </div>
     )
   }
 }

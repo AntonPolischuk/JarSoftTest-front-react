@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import BannerService from '../services/BannerService';
 import CategoryService from '../services/CategoryService';
 import Alert from 'react-bootstrap/Alert';
+import ErrorHandler from '../ErrorHandler';
+
 
 export default class UpdateBannerComponent extends Component {
     constructor(props) {
@@ -85,20 +87,7 @@ export default class UpdateBannerComponent extends Component {
         BannerService.updateBanner(banner, banner.id).then((res) => {
             this.props.history.push('/banners')
         }).catch(err => {
-            if (err.response.data.response !== undefined) {
-                this.setState({ show: true, alterValue: err.response.data.response });
-            }
-            else if (err.response.data.errors !== undefined) {
-                console.log(err.response.data.errors);
-                let message = '';
-                err.response.data.errors.forEach(function (item, i, arr) {
-                    message += item.defaultMessage;
-                });
-                this.setState({ show: true, alterValue: message });
-            }
-            else {
-                this.setState({ show: true, alterValue: err.response.data.error + ": please try again" });
-            }
+            this.setState({show:true, alterValue: ErrorHandler.updateErrorHandler(err)});
         });
 
     }
@@ -109,7 +98,7 @@ export default class UpdateBannerComponent extends Component {
             .then(response => {
                 this.props.history.push('/banners');
             }).catch(err => {
-                this.setState({ show: true, alterValue: err.response.data.error + ": please try again" });
+                this.setState({show:true, alterValue: ErrorHandler.updateErrorHandler(err)});
             });
     };
 
@@ -119,53 +108,46 @@ export default class UpdateBannerComponent extends Component {
 
     render() {
         return (
-
-            <div >
-                <div >
-                    <div>
-                        <h3 className="text-center">Update Banner</h3>
-                        <form>
-                            <div className="form-group">
-                                <label>Banner Name</label>
-                                <input placeholder="Banner Name" name="bannername" className="form-control"
+            <div>
+                <div>
+                    <h3 className="text-left border-bottom">{this.state.name} ID:{this.state.id}</h3>
+                    <form>
+                        <div className="form-group">
+                            <label>Banner Name</label>
+                            <input placeholder="Banner Name" name="bannername" className="form-control"
                                     value={this.state.name} onChange={this.changeBannerNameHandler} />
-                            </div>
-                            <div className="form-group">
-                                <label>Price</label>
-                                <input placeholder="Price" name="price" className="form-control"
+                        </div>
+                        <div className="form-group">
+                            <label>Price</label>
+                            <input placeholder="Price" name="price" className="form-control"
                                     value={this.state.price} onChange={this.changePriceHandler} />
-                            </div>
+                        </div>
 
+                        <div className="form-group">
+                            <label>Content</label>
+                            <textarea placeholder="Content" name="content" className="form-control"
+                                value={this.state.content} onChange={this.changeContentHandler} />
+                        </div>
                             <div className="form-group">
-                                <label>Content</label>
-                                <textarea placeholder="Content" name="content" className="form-control"
-                                    value={this.state.content} onChange={this.changeContentHandler} />
-                            </div>
-                            <div className="form-group">
-
-                                <label>Category</label>
-                                <select value={this.state.category.id} onChange={this.changeCategoryHandler}>
+                            <label>Category</label>
+                            <select value={this.state.category.id} onChange={this.changeCategoryHandler}>
                                     {
-                                        this.state.categories.map(
-                                            categories =>
-                                                <option key={categories.id} value={categories.id}>
-                                                    {categories.categoryName}
-                                                </option>
-                                        )
+                                    this.state.categories.map(
+                                        categories =>
+                                            <option key={categories.id} value={categories.id}>
+                                                {categories.categoryName}
+                                            </option>)
                                     }
-                                </select>
-
-                            </div>
-
-                            <button className="btn btn-succes" onClick={this.updateBanner}>Save</button>
-
-                        </form>
-                        <button className="btn btn-danger" onClick={() => this.deleteBanner(this.state.id)} >Delete</button>
-                    </div>
+                            </select> 
+                        </div>
+                        <Alert variant="danger" show={this.state.show}>
+                                {this.state.alterValue}
+                        </Alert> 
+                    </form>
+                    <button className="btn btn-primary" onClick={this.updateBanner}>Save</button>
+                    <button className="btn btn-danger float-right"
+                                onClick={() => this.deleteBanner(this.state.id)}>Delete</button>
                 </div>
-                <Alert variant="danger" show={this.state.show} >
-                    {this.state.alterValue}
-                </Alert>
             </div>
         );
     }
